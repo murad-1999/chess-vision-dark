@@ -18,7 +18,7 @@ export function ChessBoard({ fen, flipped, lastMove }: ChessBoardProps) {
   const files = flipped ? [...FILES].reverse() : FILES;
 
   return (
-    <div className="grid grid-cols-8 border border-border rounded-md overflow-hidden aspect-square w-full max-w-[560px]">
+    <div className="grid grid-cols-8 grid-rows-[repeat(8,1fr)] border border-border rounded-md overflow-hidden aspect-square w-full max-w-[560px]">
       {ranks.map((rank, ri) =>
         files.map((file, fi) => {
           const r = 8 - rank;
@@ -31,7 +31,7 @@ export function ChessBoard({ fen, flipped, lastMove }: ChessBoardProps) {
           return (
             <div
               key={squareName}
-              className="relative flex items-center justify-center select-none"
+              className="relative flex items-center justify-center select-none aspect-square"
               style={{
                 backgroundColor: isHighlighted
                   ? 'hsl(var(--board-highlight) / 0.35)'

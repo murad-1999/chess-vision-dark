@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# Frontend only
 
-TODO: Document your project here
+Chess entropy GUI with stockfish-like backend (web-based.)
