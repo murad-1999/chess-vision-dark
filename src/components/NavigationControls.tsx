@@ -50,7 +50,7 @@ export function NavigationControls({
         </Button>
         <div className="w-px h-6 bg-border mx-1" />
         <Button variant="ghost" size="icon" onClick={onFlip} title="Flip board (F)">
-          <RotateCcw className="h-4 w-4" />
+          <ArrowUpDown className="h-4 w-4" />
         </Button>
       </div>
       <div className="flex items-center gap-2 px-2">
