@@ -7,7 +7,7 @@ import {
   ChevronsRight,
   Play,
   Pause,
-  RotateCcw,
+  ArrowUpDown,
 } from 'lucide-react';
 
 interface NavigationControlsProps {
