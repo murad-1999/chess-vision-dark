@@ -218,7 +218,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center p-4 md:p-8">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-foreground">Chess Game Viewer</h1>
+      <div className="w-full max-w-4xl flex items-center justify-between mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Chess Game Viewer</h1>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => document.documentElement.classList.toggle('dark')}
+          title="Toggle light/dark mode"
+        >
+          {typeof window !== 'undefined' ? <Sun className="h-5 w-5" /> : null}
+        </Button>
+      </div>
 
       <GameInput onLoad={loadGame} loading={loading} error={error} />
 
