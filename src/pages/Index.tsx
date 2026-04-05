@@ -5,13 +5,24 @@ import { EvalBar } from '@/components/EvalBar';
 import { MoveList } from '@/components/MoveList';
 import { NavigationControls } from '@/components/NavigationControls';
 import { GameInput } from '@/components/GameInput';
+import { CapturedPieces } from '@/components/CapturedPieces';
 import { detectInputType, fetchPgnFromUrl, evaluateMaterial } from '@/lib/chess-utils';
+import { detectOpening } from '@/lib/openings';
+
+const ENGINE_BASE_URL = 'http://localhost:8000';
+
+interface EngineEval {
+  centipawns?: number;
+  winning_chances?: number;
+  mate?: number | null;
+}
 
 interface GameState {
   moves: string[];
   fens: string[];
   lastMoves: ({ from: string; to: string } | null)[];
   headers: Record<string, string>;
+  engineEvals: EngineEval[];
 }
 
 const Index = () => {
@@ -22,25 +33,27 @@ const Index = () => {
   const [speed, setSpeed] = useState(1000);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pollingTaskId, setPollingTaskId] = useState<string | null>(null);
   const playIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadGame = useCallback(async (input: string) => {
     setError(null);
     setLoading(true);
     setIsPlaying(false);
+    setPollingTaskId(null);
 
     try {
       const type = detectInputType(input);
       let pgn = '';
 
       if (type === 'fen') {
-        // Just load a FEN position, no moves
         const chess = new Chess(input.trim());
         setGameState({
           moves: [],
           fens: [chess.fen()],
           lastMoves: [null],
           headers: {},
+          engineEvals: [],
         });
         setCurrentMoveIndex(0);
         setLoading(false);
@@ -60,7 +73,6 @@ const Index = () => {
       const headers = chess.header() as unknown as Record<string, string>;
       const history = chess.history({ verbose: true });
 
-      // Build FEN array for each position
       const fens: string[] = [];
       const lastMoves: ({ from: string; to: string } | null)[] = [];
       const moveNames: string[] = [];
@@ -76,13 +88,65 @@ const Index = () => {
         moveNames.push(move.san);
       }
 
-      setGameState({ moves: moveNames, fens, lastMoves, headers });
+      setGameState({ moves: moveNames, fens, lastMoves, headers, engineEvals: [] });
       setCurrentMoveIndex(-1);
+
+      // Submit to engine for analysis
+      try {
+        const resp = await fetch(`${ENGINE_BASE_URL}/import`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pgn_string: pgn }),
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data.task_id) {
+            setPollingTaskId(data.task_id);
+          }
+        }
+      } catch {
+        // Engine not available, silently fall back to material eval
+      }
     } catch (e: any) {
       setError(e.message || 'Failed to load game');
     }
     setLoading(false);
   }, []);
+
+  // Poll engine task
+  useEffect(() => {
+    if (!pollingTaskId) return;
+
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const resp = await fetch(`${ENGINE_BASE_URL}/task/${pollingTaskId}`);
+        if (!resp.ok) {
+          setPollingTaskId(null);
+          return;
+        }
+        const data = await resp.json();
+        if (data.status === 'completed' && data.result) {
+          setGameState(prev => prev ? { ...prev, engineEvals: data.result } : prev);
+          setPollingTaskId(null);
+          return;
+        }
+        if (data.status === 'failed') {
+          setPollingTaskId(null);
+          return;
+        }
+      } catch {
+        // Engine unavailable
+        setPollingTaskId(null);
+        return;
+      }
+      if (!cancelled) {
+        setTimeout(poll, 1000);
+      }
+    };
+    poll();
+    return () => { cancelled = true; };
+  }, [pollingTaskId]);
 
   // Navigation
   const goToMove = useCallback((idx: number) => {
@@ -137,7 +201,20 @@ const Index = () => {
   const currentFenIndex = gameState ? currentMoveIndex + 1 : 0;
   const currentFen = gameState ? gameState.fens[currentFenIndex] || gameState.fens[0] : 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   const currentLastMove = gameState ? gameState.lastMoves[currentFenIndex] : null;
-  const evaluation = evaluateMaterial(currentFen);
+
+  // Engine eval for current position
+  const currentEngineEval = gameState?.engineEvals?.[currentFenIndex];
+  const evalCentipawns = currentEngineEval?.centipawns != null ? currentEngineEval.centipawns / 100 : null;
+  const evalWinningChances = currentEngineEval?.winning_chances ?? null;
+  const evalMate = currentEngineEval?.mate ?? null;
+
+  // Fallback to material eval if no engine data
+  const materialEval = evaluateMaterial(currentFen);
+  const displayEval = evalCentipawns ?? materialEval;
+
+  // Opening detection
+  const currentMoves = gameState ? gameState.moves.slice(0, currentMoveIndex + 1) : [];
+  const opening = detectOpening(currentMoves);
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center p-4 md:p-8">
@@ -148,9 +225,36 @@ const Index = () => {
       {gameState && (
         <div className="mt-6 flex flex-col lg:flex-row gap-4 w-full max-w-4xl">
           {/* Board + Eval bar */}
-          <div className="flex gap-2 justify-center">
-            <EvalBar evaluation={evaluation} flipped={flipped} />
-            <ChessBoard fen={currentFen} flipped={flipped} lastMove={currentLastMove} />
+          <div className="flex flex-col gap-2">
+            {/* Captured by white (black pieces taken) */}
+            <div className="flex items-center gap-2 min-h-[24px]">
+              <CapturedPieces fen={currentFen} />
+            </div>
+
+            <div className="flex gap-2 justify-center">
+              <EvalBar
+                evaluation={displayEval}
+                winningChances={evalWinningChances}
+                mate={evalMate}
+                flipped={flipped}
+              />
+              <ChessBoard fen={currentFen} flipped={flipped} lastMove={currentLastMove} />
+            </div>
+
+            {/* Opening name */}
+            {opening && (
+              <div className="text-xs text-muted-foreground mt-1">
+                <span className="font-mono text-primary/80 mr-1">{opening.eco}</span>
+                {opening.name}
+              </div>
+            )}
+
+            {/* Engine status */}
+            {pollingTaskId && (
+              <div className="text-xs text-muted-foreground animate-pulse">
+                ⟳ Analyzing with Stockfish...
+              </div>
+            )}
           </div>
 
           {/* Right panel: move list + controls */}
