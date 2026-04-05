@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { Sun } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Chess } from 'chess.js';
 import { ChessBoard } from '@/components/ChessBoard';
 import { EvalBar } from '@/components/EvalBar';
