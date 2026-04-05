@@ -43,9 +43,9 @@
     --sidebar-border: 220 10% 82%;
     --sidebar-ring: 210 60% 45%;
 
-    --board-light: 35 30% 80%;
-    --board-dark: 30 20% 55%;
-    --board-highlight: 45 80% 55%;
+    --board-light: 34 36% 82%;
+    --board-dark: 120 30% 45%;
+    --board-highlight: 45 85% 55%;
   }
 
   .dark {
@@ -86,9 +86,9 @@
     --sidebar-border: 220 15% 22%;
     --sidebar-ring: 210 60% 50%;
 
-    --board-light: 220 10% 28%;
-    --board-dark: 220 12% 20%;
-    --board-highlight: 45 80% 55%;
+    --board-light: 34 36% 82%;
+    --board-dark: 120 30% 45%;
+    --board-highlight: 45 85% 55%;
   }
 }
 

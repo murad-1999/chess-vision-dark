@@ -1,5 +1,5 @@
-import { Chess, type Square } from 'chess.js';
-import { getPieceUnicode } from '@/lib/chess-utils';
+import { Chess } from 'chess.js';
+import { ChessPiece } from '@/components/ChessPiece';
 
 interface ChessBoardProps {
   fen: string;
@@ -34,35 +34,30 @@ export function ChessBoard({ fen, flipped, lastMove }: ChessBoardProps) {
               className="relative flex items-center justify-center select-none aspect-square"
               style={{
                 backgroundColor: isHighlighted
-                  ? 'hsl(var(--board-highlight) / 0.35)'
+                  ? 'hsl(var(--board-highlight) / 0.45)'
                   : isLight
                   ? 'hsl(var(--board-light))'
                   : 'hsl(var(--board-dark))',
               }}
             >
-              {/* Coordinate labels */}
               {fi === 0 && (
-                <span className="absolute top-0.5 left-0.5 text-[10px] text-muted-foreground/60 leading-none">
+                <span
+                  className="absolute top-0.5 left-0.5 text-[10px] leading-none font-semibold"
+                  style={{ color: isLight ? 'hsl(var(--board-dark))' : 'hsl(var(--board-light))' }}
+                >
                   {rank}
                 </span>
               )}
               {ri === 7 && (
-                <span className="absolute bottom-0.5 right-0.5 text-[10px] text-muted-foreground/60 leading-none">
+                <span
+                  className="absolute bottom-0.5 right-0.5 text-[10px] leading-none font-semibold"
+                  style={{ color: isLight ? 'hsl(var(--board-dark))' : 'hsl(var(--board-light))' }}
+                >
                   {file}
                 </span>
               )}
               {sq && (
-                <span
-                  className="text-[min(5vw,3rem)] leading-none drop-shadow-md"
-                  style={{
-                    color: sq.color === 'w' ? 'hsl(210 20% 92%)' : 'hsl(220 15% 12%)',
-                    textShadow: sq.color === 'w'
-                      ? '0 1px 3px rgba(0,0,0,0.5)'
-                      : '0 1px 3px rgba(255,255,255,0.15)',
-                  }}
-                >
-                  {getPieceUnicode(sq.color, sq.type)}
-                </span>
+                <ChessPiece piece={sq.type} color={sq.color} />
               )}
             </div>
           );
