@@ -129,6 +129,9 @@ const Index = () => {
         }
         const data = await resp.json();
         if (data.status === 'completed' && data.result) {
+          console.log('Engine API Response:', JSON.stringify(data).slice(0, 500));
+          console.log('First eval entry:', data.result[0]);
+          console.log('Result length:', data.result.length);
           setGameState(prev => prev ? { ...prev, engineEvals: data.result } : prev);
           setPollingTaskId(null);
           return;
@@ -213,6 +216,8 @@ const Index = () => {
   // Fallback to material eval if no engine data
   const materialEval = evaluateMaterial(currentFen);
   const displayEval = evalCentipawns ?? materialEval;
+
+  console.log('Move index:', currentMoveIndex, 'FEN index:', currentFenIndex, 'engineEval:', currentEngineEval, 'displayEval:', displayEval, 'winChances:', evalWinningChances, 'mate:', evalMate);
 
   // Opening detection
   const currentMoves = gameState ? gameState.moves.slice(0, currentMoveIndex + 1) : [];
