@@ -8,7 +8,6 @@ interface MoveListProps {
 }
 
 export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: MoveListProps) {
-  // Group moves into pairs (white, black)
   const pairs: { num: number; white: string; black?: string; whiteIdx: number; blackIdx?: number }[] = [];
   for (let i = 0; i < moves.length; i += 2) {
     pairs.push({
@@ -21,17 +20,21 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
   }
 
   return (
-    <div className="flex flex-col h-full border border-border rounded-md bg-card overflow-hidden">
+    <div className="flex flex-col h-full rounded-xl border border-border bg-card/60 backdrop-blur-sm overflow-hidden">
       {/* Game info header */}
       {headers && (headers.White || headers.Black || headers.Event) && (
-        <div className="p-3 border-b border-border space-y-0.5">
-          {headers.Event && <p className="text-xs text-muted-foreground">{headers.Event}</p>}
+        <div className="px-4 py-3 border-b border-border/50 bg-card/40">
+          {headers.Event && <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{headers.Event}</p>}
           {(headers.White || headers.Black) && (
-            <p className="text-sm font-medium">
-              {headers.White || '?'} vs {headers.Black || '?'}
+            <p className="text-sm font-semibold mt-0.5">
+              {headers.White || '?'} <span className="text-muted-foreground font-normal">vs</span> {headers.Black || '?'}
             </p>
           )}
-          {headers.Result && <p className="text-xs text-muted-foreground">{headers.Result}</p>}
+          {headers.Result && (
+            <span className="inline-block mt-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+              {headers.Result}
+            </span>
+          )}
         </div>
       )}
 
@@ -39,13 +42,15 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
         {pairs.length === 0 ? (
           <p className="text-sm text-muted-foreground p-2">No moves to display</p>
         ) : (
-          <div className="space-y-0.5">
+          <div className="space-y-px">
             {pairs.map((pair) => (
-              <div key={pair.num} className="flex text-sm font-mono">
-                <span className="w-8 text-muted-foreground text-right mr-2 shrink-0">{pair.num}.</span>
+              <div key={pair.num} className="flex text-sm font-mono items-center">
+                <span className="w-8 text-muted-foreground/60 text-right mr-2 shrink-0 text-xs">{pair.num}.</span>
                 <button
-                  className={`px-1.5 py-0.5 rounded text-left hover:bg-accent/50 transition-colors ${
-                    currentMoveIndex === pair.whiteIdx ? 'bg-primary/20 text-primary font-semibold' : ''
+                  className={`px-2 py-1 rounded-md text-left transition-colors text-xs ${
+                    currentMoveIndex === pair.whiteIdx
+                      ? 'bg-primary/15 text-primary font-semibold ring-1 ring-primary/20'
+                      : 'hover:bg-accent/40'
                   }`}
                   onClick={() => onMoveClick(pair.whiteIdx)}
                 >
@@ -53,8 +58,10 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
                 </button>
                 {pair.black && pair.blackIdx !== undefined && (
                   <button
-                    className={`px-1.5 py-0.5 rounded text-left hover:bg-accent/50 transition-colors ml-1 ${
-                      currentMoveIndex === pair.blackIdx ? 'bg-primary/20 text-primary font-semibold' : ''
+                    className={`px-2 py-1 rounded-md text-left transition-colors ml-1 text-xs ${
+                      currentMoveIndex === pair.blackIdx
+                        ? 'bg-primary/15 text-primary font-semibold ring-1 ring-primary/20'
+                        : 'hover:bg-accent/40'
                     }`}
                     onClick={() => onMoveClick(pair.blackIdx!)}
                   >
