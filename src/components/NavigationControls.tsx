@@ -31,39 +31,45 @@ export function NavigationControls({
   canPrev, canNext,
 }: NavigationControlsProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-center gap-1">
-        <Button variant="ghost" size="icon" onClick={onFirst} disabled={!canPrev} title="First move (Home)">
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-center gap-0.5">
+        <Button variant="ghost" size="icon" onClick={onFirst} disabled={!canPrev} title="First move (Home)" className="h-9 w-9 rounded-lg">
           <ChevronsLeft className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={onPrev} disabled={!canPrev} title="Previous move (←)">
+        <Button variant="ghost" size="icon" onClick={onPrev} disabled={!canPrev} title="Previous move (←)" className="h-9 w-9 rounded-lg">
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={onTogglePlay} title="Auto-play (Space)">
+        <Button
+          variant={isPlaying ? 'secondary' : 'ghost'}
+          size="icon"
+          onClick={onTogglePlay}
+          title="Auto-play (Space)"
+          className="h-9 w-9 rounded-lg"
+        >
           {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </Button>
-        <Button variant="ghost" size="icon" onClick={onNext} disabled={!canNext} title="Next move (→)">
+        <Button variant="ghost" size="icon" onClick={onNext} disabled={!canNext} title="Next move (→)" className="h-9 w-9 rounded-lg">
           <ChevronRight className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={onLast} disabled={!canNext} title="Last move (End)">
+        <Button variant="ghost" size="icon" onClick={onLast} disabled={!canNext} title="Last move (End)" className="h-9 w-9 rounded-lg">
           <ChevronsRight className="h-4 w-4" />
         </Button>
-        <div className="w-px h-6 bg-border mx-1" />
-        <Button variant="ghost" size="icon" onClick={onFlip} title="Flip board (F)">
+        <div className="w-px h-5 bg-border mx-1.5" />
+        <Button variant="ghost" size="icon" onClick={onFlip} title="Flip board (F)" className="h-9 w-9 rounded-lg">
           <ArrowUpDown className="h-4 w-4" />
         </Button>
       </div>
-      <div className="flex items-center gap-2 px-2">
-        <span className="text-xs text-muted-foreground whitespace-nowrap">Speed</span>
+      <div className="flex items-center gap-2 px-1">
+        <span className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">Speed</span>
         <Slider
           min={200}
           max={3000}
           step={100}
           value={[speed]}
           onValueChange={([v]) => onSpeedChange(v)}
-          className="w-24"
+          className="flex-1"
         />
-        <span className="text-xs text-muted-foreground w-10">{(speed / 1000).toFixed(1)}s</span>
+        <span className="text-[11px] text-muted-foreground w-8 text-right font-mono">{(speed / 1000).toFixed(1)}s</span>
       </div>
     </div>
   );
