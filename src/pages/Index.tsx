@@ -217,6 +217,8 @@ const Index = () => {
   const materialEval = evaluateMaterial(currentFen);
   const displayEval = evalCentipawns ?? materialEval;
 
+  console.log('Move index:', currentMoveIndex, 'FEN index:', currentFenIndex, 'engineEval:', currentEngineEval, 'displayEval:', displayEval, 'winChances:', evalWinningChances, 'mate:', evalMate);
+
   // Opening detection
   const currentMoves = gameState ? gameState.moves.slice(0, currentMoveIndex + 1) : [];
   const opening = detectOpening(currentMoves);
