@@ -128,11 +128,11 @@ const Index = () => {
           return;
         }
         const data = await resp.json();
-        if (data.status === 'completed' && data.result) {
+        if (data.status === 'completed' && data.results) {
           console.log('Engine API Response:', JSON.stringify(data).slice(0, 500));
-          console.log('First eval entry:', data.result[0]);
-          console.log('Result length:', data.result.length);
-          setGameState(prev => prev ? { ...prev, engineEvals: data.result } : prev);
+          console.log('First eval entry:', data.results[0]);
+          console.log('Result length:', data.results.length);
+          setGameState(prev => prev ? { ...prev, engineEvals: data.results } : prev);
           setPollingTaskId(null);
           return;
         }
