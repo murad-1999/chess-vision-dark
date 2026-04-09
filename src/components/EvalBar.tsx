@@ -31,7 +31,7 @@ export function EvalBar({ evaluation, winningChances, mate, flipped }: EvalBarPr
   }
 
   const displayPercent = flipped ? 100 - whitePercent : whitePercent;
-  const favorsWhite = evaluation != null ? evaluation >= 0 : (mate != null ? (mate ?? 0) > 0 : true);
+  const favorsWhite = mate != null && mate !== 0 ? mate > 0 : (evaluation != null ? evaluation >= 0 : true);
 
   return (
     <div className="flex flex-col items-center w-6 rounded-md overflow-hidden border border-border h-full min-h-[200px]">
