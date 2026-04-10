@@ -23,15 +23,15 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Game info header */}
       {headers && (headers.White || headers.Black || headers.Event) && (
-        <div className="px-4 py-3 border-b border-border/50 bg-card/40">
-          {headers.Event && <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{headers.Event}</p>}
+        <div className="px-5 py-4 border-b border-border/50 bg-gradient-to-r from-card/60 to-muted/30">
+          {headers.Event && <p className="text-[11px] text-primary/80 uppercase tracking-wider font-semibold">{headers.Event}</p>}
           {(headers.White || headers.Black) && (
-            <p className="text-sm font-semibold mt-0.5">
-              {headers.White || '?'} <span className="text-muted-foreground font-normal">vs</span> {headers.Black || '?'}
+            <p className="text-sm font-semibold mt-1 text-foreground">
+              {headers.White || '?'} <span className="text-muted-foreground font-medium mx-1">vs</span> {headers.Black || '?'}
             </p>
           )}
           {headers.Result && (
-            <span className="inline-block mt-1 text-[11px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+            <span className="inline-block mt-2 text-[11px] font-mono px-2 py-1 rounded-lg bg-primary/10 text-primary border border-primary/20">
               {headers.Result}
             </span>
           )}
