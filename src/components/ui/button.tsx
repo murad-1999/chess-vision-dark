@@ -9,12 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        default: "bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 active:scale-[0.98] transition-all duration-200",
+        destructive: "bg-destructive text-destructive-foreground shadow-lg shadow-destructive/20 hover:bg-destructive/90 hover:shadow-xl hover:shadow-destructive/25 active:scale-[0.98] transition-all duration-200",
+        outline: "border border-input bg-background/50 backdrop-blur-sm hover:bg-accent/80 hover:text-accent-foreground hover:border-accent/50 active:scale-[0.98] transition-all duration-200",
+        secondary: "bg-secondary text-secondary-foreground shadow-lg shadow-black/5 hover:bg-secondary/70 hover:shadow-xl hover:shadow-black/10 active:scale-[0.98] transition-all duration-200",
+        ghost: "hover:bg-accent/50 hover:text-accent-foreground active:scale-[0.98] transition-all duration-200",
+        link: "text-primary underline-offset-4 hover:underline hover:text-primary/80 transition-colors duration-200",
       },
       size: {
         default: "h-10 px-4 py-2",
