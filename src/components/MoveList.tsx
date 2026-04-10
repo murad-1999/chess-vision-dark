@@ -20,7 +20,7 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+    <div className="flex flex-col h-full min-h-0 overflow-hidden">
       {/* Game info header */}
       {headers && (headers.White || headers.Black || headers.Event) && (
         <div className="px-5 py-4 border-b border-border/50 bg-gradient-to-r from-card/60 to-muted/30">
