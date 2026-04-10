@@ -315,17 +315,15 @@ const Index = () => {
               )}
             </div>
 
-            {/* Right panel */}
-            <div className="flex flex-col gap-3 lg:w-72 w-full min-w-0">
-              <div className="flex-1 min-h-[200px] max-h-[460px]">
-                <MoveList
-                  moves={gameState.moves}
-                  currentMoveIndex={currentMoveIndex}
-                  onMoveClick={goToMove}
-                  headers={gameState.headers}
-                />
-              </div>
-              <div className="rounded-xl border border-border bg-card/60 p-3">
+            {/* Right panel — flush with board height */}
+            <div className="flex flex-col lg:w-80 w-full min-w-0 rounded-xl border border-border bg-card/60 backdrop-blur-sm overflow-hidden self-stretch">
+              <MoveList
+                moves={gameState.moves}
+                currentMoveIndex={currentMoveIndex}
+                onMoveClick={goToMove}
+                headers={gameState.headers}
+              />
+              <div className="border-t border-border bg-muted/40 p-3 shrink-0">
                 <NavigationControls
                   onFirst={goFirst}
                   onPrev={goPrev}

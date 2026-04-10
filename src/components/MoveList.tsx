@@ -1,4 +1,4 @@
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 
 interface MoveListProps {
   moves: string[];
@@ -20,7 +20,7 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
   }
 
   return (
-    <div className="flex flex-col h-full rounded-xl border border-border bg-card/60 backdrop-blur-sm overflow-hidden">
+    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* Game info header */}
       {headers && (headers.White || headers.Black || headers.Event) && (
         <div className="px-4 py-3 border-b border-border/50 bg-card/40">
@@ -38,7 +38,7 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
         </div>
       )}
 
-      <ScrollArea className="flex-1 p-2">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-2">
         {pairs.length === 0 ? (
           <p className="text-sm text-muted-foreground p-2">No moves to display</p>
         ) : (
@@ -72,7 +72,7 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
             ))}
           </div>
         )}
-      </ScrollArea>
+      </div>
     </div>
   );
 }
