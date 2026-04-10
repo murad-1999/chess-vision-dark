@@ -8,6 +8,9 @@ import { MoveList } from '@/components/MoveList';
 import { NavigationControls } from '@/components/NavigationControls';
 import { GameInput } from '@/components/GameInput';
 import { CapturedPieces } from '@/components/CapturedPieces';
+import { TensionMetric } from '@/components/TensionMetric';
+import { HeatmapOverlay } from '@/components/HeatmapOverlay';
+import { EntropyGraph, EntropyDataPoint } from '@/components/EntropyGraph';
 import { detectInputType, fetchPgnFromUrl, evaluateMaterial } from '@/lib/chess-utils';
 import { detectOpening } from '@/lib/openings';
 import {
@@ -44,6 +47,11 @@ const Index = () => {
   const [isDark, setIsDark] = useState(false);
   const [inputOpen, setInputOpen] = useState(true);
   const playIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Dummy state variables for tension and entropy components
+  const [tensionMatrix, setTensionMatrix] = useState<Record<string, number>>({});
+  const [entropyData, setEntropyData] = useState<EntropyDataPoint[]>([]);
+  const [currentEntropy, setCurrentEntropy] = useState<number>(0);
 
   const toggleTheme = useCallback(() => {
     document.documentElement.classList.toggle('dark');
@@ -290,10 +298,11 @@ const Index = () => {
         {gameState && (
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Board column */}
-            <div className="flex flex-col gap-3 flex-shrink-0">
-              {/* Captured pieces (top) */}
-              <div className="flex items-center gap-2 min-h-[28px] px-2">
+            <div className="flex flex-col gap-3 flex-shrink-0 max-w-[560px] lg:max-w-[600px] w-full">
+              {/* Captured pieces & Tension */}
+              <div className="flex items-center justify-between min-h-[28px] px-2">
                 <CapturedPieces fen={currentFen} />
+                <TensionMetric currentEntropy={currentEntropy} />
               </div>
 
               <div className="flex gap-3 rounded-2xl overflow-hidden shadow-2xl shadow-black/20 border border-border/60">
@@ -303,12 +312,19 @@ const Index = () => {
                   mate={evalMate}
                   flipped={flipped}
                 />
-                <ChessBoard fen={currentFen} flipped={flipped} lastMove={currentLastMove} />
+                <div className="relative flex-1">
+                  <ChessBoard fen={currentFen} flipped={flipped} lastMove={currentLastMove} />
+                  <HeatmapOverlay tensionMatrix={tensionMatrix} flipped={flipped} />
+                </div>
+              </div>
+
+              <div className="w-full">
+                <EntropyGraph data={entropyData} />
               </div>
 
               {/* Opening name */}
               {opening && (
-                <div className="text-xs text-muted-foreground mt-2 px-2 py-2 bg-muted/30 rounded-lg inline-block self-start">
+                <div className="text-xs text-muted-foreground px-2 py-2 bg-muted/30 rounded-lg inline-block self-start">
                   <span className="font-mono text-primary/90 mr-2 font-semibold">{opening.eco}</span>
                   {opening.name}
                 </div>
