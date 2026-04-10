@@ -14,12 +14,12 @@ export function GameInput({ onLoad, loading, error }: GameInputProps) {
   const [input, setInput] = useState('');
 
   return (
-    <div className="space-y-3 pt-4">
+    <div className="space-y-4 pt-5">
       <Textarea
         placeholder="Paste PGN, FEN, or a Chess.com / Lichess game link..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        className="min-h-[80px] bg-background/50 font-mono text-sm resize-y border-border/50 focus:border-primary/50"
+        className="min-h-[100px] bg-background/60 font-mono text-sm resize-y border-border/40 rounded-xl focus:border-primary/60 focus:ring-2 focus:ring-primary/10 transition-all duration-200"
       />
       <div className="flex gap-2 flex-wrap">
         <Button onClick={() => onLoad(input)} disabled={loading || !input.trim()} size="sm">
@@ -38,7 +38,7 @@ export function GameInput({ onLoad, loading, error }: GameInputProps) {
           Load Sample (Immortal Game)
         </Button>
       </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-lg border border-destructive/20">{error}</p>}
     </div>
   );
 }

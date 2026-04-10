@@ -31,32 +31,32 @@ export function NavigationControls({
   canPrev, canNext,
 }: NavigationControlsProps) {
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-center gap-0.5">
-        <Button variant="ghost" size="icon" onClick={onFirst} disabled={!canPrev} title="First move (Home)" className="h-9 w-9 rounded-lg">
-          <ChevronsLeft className="h-4 w-4" />
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-center gap-1 bg-muted/50 rounded-xl p-1.5">
+        <Button variant="ghost" size="icon" onClick={onFirst} disabled={!canPrev} title="First move (Home)" className="h-10 w-10 rounded-lg hover:bg-background/80 disabled:opacity-30">
+          <ChevronsLeft className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={onPrev} disabled={!canPrev} title="Previous move (←)" className="h-9 w-9 rounded-lg">
-          <ChevronLeft className="h-4 w-4" />
+        <Button variant="ghost" size="icon" onClick={onPrev} disabled={!canPrev} title="Previous move (←)" className="h-10 w-10 rounded-lg hover:bg-background/80 disabled:opacity-30">
+          <ChevronLeft className="h-5 w-5" />
         </Button>
         <Button
-          variant={isPlaying ? 'secondary' : 'ghost'}
+          variant={isPlaying ? 'default' : 'ghost'}
           size="icon"
           onClick={onTogglePlay}
           title="Auto-play (Space)"
-          className="h-9 w-9 rounded-lg"
+          className="h-10 w-10 rounded-lg"
         >
-          {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
         </Button>
-        <Button variant="ghost" size="icon" onClick={onNext} disabled={!canNext} title="Next move (→)" className="h-9 w-9 rounded-lg">
-          <ChevronRight className="h-4 w-4" />
+        <Button variant="ghost" size="icon" onClick={onNext} disabled={!canNext} title="Next move (→)" className="h-10 w-10 rounded-lg hover:bg-background/80 disabled:opacity-30">
+          <ChevronRight className="h-5 w-5" />
         </Button>
-        <Button variant="ghost" size="icon" onClick={onLast} disabled={!canNext} title="Last move (End)" className="h-9 w-9 rounded-lg">
-          <ChevronsRight className="h-4 w-4" />
+        <Button variant="ghost" size="icon" onClick={onLast} disabled={!canNext} title="Last move (End)" className="h-10 w-10 rounded-lg hover:bg-background/80 disabled:opacity-30">
+          <ChevronsRight className="h-5 w-5" />
         </Button>
-        <div className="w-px h-5 bg-border mx-1.5" />
-        <Button variant="ghost" size="icon" onClick={onFlip} title="Flip board (F)" className="h-9 w-9 rounded-lg">
-          <ArrowUpDown className="h-4 w-4" />
+        <div className="w-px h-6 bg-border/60 mx-2" />
+        <Button variant="ghost" size="icon" onClick={onFlip} title="Flip board (F)" className="h-10 w-10 rounded-lg hover:bg-background/80">
+          <ArrowUpDown className="h-5 w-5" />
         </Button>
       </div>
       <div className="flex items-center gap-2 px-1">
