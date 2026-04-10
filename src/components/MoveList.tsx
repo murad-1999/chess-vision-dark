@@ -38,7 +38,7 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
         </div>
       )}
 
-      <ScrollArea className="flex-1 p-2">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-2">
         {pairs.length === 0 ? (
           <p className="text-sm text-muted-foreground p-2">No moves to display</p>
         ) : (
@@ -72,7 +72,7 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
             ))}
           </div>
         )}
-      </ScrollArea>
+      </div>
     </div>
   );
 }
