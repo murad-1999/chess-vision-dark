@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { Sun, Moon, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Chess } from 'chess.js';
@@ -13,14 +13,14 @@ import { HeatmapOverlay } from '@/components/HeatmapOverlay';
 import { EntropyGraph, EntropyDataPoint } from '@/components/EntropyGraph';
 import { detectInputType, fetchPgnFromUrl, evaluateMaterial } from '@/lib/chess-utils';
 import { detectOpening } from '@/lib/openings';
-import { analyzePosition } from '@/services/api';
+import { analyzePosition, AnalysisResponse } from '@/services/api';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 
-const ENGINE_BASE_URL = 'http://localhost:8000';
+// ENGINE_BASE_URL removed for JIT implementation
 
 interface EngineEval {
   centipawns?: number;
@@ -44,15 +44,30 @@ const Index = () => {
   const [speed, setSpeed] = useState(1000);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [pollingTaskId, setPollingTaskId] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(false);
   const [inputOpen, setInputOpen] = useState(true);
   const playIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Dummy state variables for tension and entropy components
+  // JIT Analysis state
+  const [analysisCache, setAnalysisCache] = useState<Record<string, AnalysisResponse>>({});
+  const analysisTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [tensionMatrix, setTensionMatrix] = useState<Record<string, number>>({});
-  const [entropyData, setEntropyData] = useState<EntropyDataPoint[]>([]);
   const [currentEntropy, setCurrentEntropy] = useState<number>(0);
+
+  // Background Graph Hydration (Computed from cache)
+  const entropyData = useMemo(() => {
+    if (!gameState) return [];
+    return gameState.fens
+      .map((fen, idx) => {
+        const cached = analysisCache[fen];
+        if (!cached) return null;
+        return {
+          move: idx === 0 ? 'Start' : gameState.moves[idx - 1] || `${idx}`,
+          entropy: cached.total_entropy,
+        };
+      })
+      .filter((d): d is EntropyDataPoint => d !== null);
+  }, [gameState, analysisCache]);
 
   const toggleTheme = useCallback(() => {
     document.documentElement.classList.toggle('dark');
@@ -63,7 +78,6 @@ const Index = () => {
     setError(null);
     setLoading(true);
     setIsPlaying(false);
-    setPollingTaskId(null);
 
     try {
       const type = detectInputType(input);
@@ -115,62 +129,15 @@ const Index = () => {
       setGameState({ moves: moveNames, fens, lastMoves, headers, engineEvals: [] });
       setCurrentMoveIndex(-1);
       setInputOpen(false);
-
-      // Submit to engine for analysis
-      try {
-        const resp = await fetch(`${ENGINE_BASE_URL}/import`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pgn_string: pgn }),
-        });
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data.task_id) {
-            setPollingTaskId(data.task_id);
-          }
-        }
-      } catch {
-        // Engine not available, silently fall back to material eval
-      }
+      setLoading(false); // Instant load confirmation
+      return; 
     } catch (e: any) {
       setError(e.message || 'Failed to load game');
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  // Poll engine task
-  useEffect(() => {
-    if (!pollingTaskId) return;
-
-    let cancelled = false;
-    const poll = async () => {
-      try {
-        const resp = await fetch(`${ENGINE_BASE_URL}/task/${pollingTaskId}`);
-        if (!resp.ok) {
-          setPollingTaskId(null);
-          return;
-        }
-        const data = await resp.json();
-        if (data.status === 'completed' && data.results) {
-          setGameState(prev => prev ? { ...prev, engineEvals: data.results } : prev);
-          setPollingTaskId(null);
-          return;
-        }
-        if (data.status === 'failed') {
-          setPollingTaskId(null);
-          return;
-        }
-      } catch {
-        setPollingTaskId(null);
-        return;
-      }
-      if (!cancelled) {
-        setTimeout(poll, 1000);
-      }
-    };
-    poll();
-    return () => { cancelled = true; };
-  }, [pollingTaskId]);
+  // Polling removed in favor of JIT evaluation
 
   // Navigation
   const goToMove = useCallback((idx: number) => {
@@ -232,35 +199,43 @@ const Index = () => {
   const evalWinningChances = currentEngineEval?.winning_chances ?? null;
   const evalMate = currentEngineEval?.mate ?? null;
 
-  // New entropy and tension analysis
+  // JIT FEN Analysis with Debounce
   useEffect(() => {
     if (!currentFen) return;
 
-    const fetchAnalysis = async () => {
+    // Clear existing timeout
+    if (analysisTimeoutRef.current) {
+      clearTimeout(analysisTimeoutRef.current);
+    }
+
+    // Check cache first for immediate update
+    if (analysisCache[currentFen]) {
+      const cached = analysisCache[currentFen];
+      setCurrentEntropy(cached.total_entropy);
+      setTensionMatrix(cached.tension_matrix);
+      return;
+    }
+
+    // Debounce the API call
+    analysisTimeoutRef.current = setTimeout(async () => {
       try {
         const data = await analyzePosition(currentFen);
-        console.log("API Response:", data);
+        
+        // Update cache and current position data
+        setAnalysisCache(prev => ({ ...prev, [currentFen]: data }));
         setCurrentEntropy(data.total_entropy);
         setTensionMatrix(data.tension_matrix);
-        
-        // Update entropy graph data if we have a valid index
-        if (currentFenIndex >= 0) {
-          setEntropyData(prev => {
-            const newData = [...prev];
-            newData[currentFenIndex] = {
-              move: currentFenIndex === 0 ? 'Start' : gameState?.moves[currentFenIndex - 1] || `${currentFenIndex}`,
-              entropy: data.total_entropy
-            };
-            return newData;
-          });
-        }
       } catch (err) {
         console.error('Failed to fetch entropy analysis:', err);
       }
-    };
+    }, 300);
 
-    fetchAnalysis();
-  }, [currentFen, currentFenIndex, gameState?.moves]);
+    return () => {
+      if (analysisTimeoutRef.current) {
+        clearTimeout(analysisTimeoutRef.current);
+      }
+    };
+  }, [currentFen]);
 
   // Fallback to material eval if no engine data
   const materialEval = evaluateMaterial(currentFen);
@@ -282,11 +257,7 @@ const Index = () => {
             <h1 className="text-2xl font-semibold text-foreground tracking-tight">Chess Game Viewer</h1>
           </div>
           <div className="flex items-center gap-3">
-            {pollingTaskId && (
-              <span className="text-sm text-muted-foreground animate-pulse mr-2 bg-muted/50 px-4 py-2 rounded-full">
-                ⟳ Analyzing...
-              </span>
-            )}
+            {/* Polling indicator removed */}
             <Button
               variant="ghost"
               size="icon"
