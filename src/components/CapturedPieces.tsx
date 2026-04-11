@@ -40,14 +40,14 @@ export function CapturedPieces({ fen }: CapturedPiecesProps) {
   const blackCaptured = getCaptured('b'); // black pieces captured (by white)
 
   return (
-    <div className="flex flex-col gap-1 text-sm">
-      <div className="flex items-center gap-0.5 min-h-[20px]">
-        <span className="text-[11px] tracking-tight opacity-80">
+    <div className="flex flex-col gap-1 text-base">
+      <div className="flex items-center gap-0.5 min-h-[24px]">
+        <span className="text-sm tracking-tight opacity-80">
           {blackCaptured.join('')}
         </span>
       </div>
-      <div className="flex items-center gap-0.5 min-h-[20px]">
-        <span className="text-[11px] tracking-tight opacity-80">
+      <div className="flex items-center gap-0.5 min-h-[24px]">
+        <span className="text-sm tracking-tight opacity-80">
           {whiteCaptured.join('')}
         </span>
       </div>

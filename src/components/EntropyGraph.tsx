@@ -35,7 +35,7 @@ export const EntropyGraph: React.FC<EntropyGraphProps> = ({ data }) => {
   if (!data || data.length === 0) return null;
 
   return (
-    <div className="w-full h-32 mt-4 bg-card/40 border border-border/50 rounded-xl overflow-hidden shadow-inner p-2">
+    <div className="w-full h-40 mt-4 bg-card/40 border border-border/50 rounded-xl overflow-hidden shadow-inner p-2.5">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 2 }} />

@@ -24,14 +24,14 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
       {/* Game info header */}
       {headers && (headers.White || headers.Black || headers.Event) && (
         <div className="px-5 py-4 border-b border-border/50 bg-gradient-to-r from-card/60 to-muted/30">
-          {headers.Event && <p className="text-[11px] text-primary/80 uppercase tracking-wider font-semibold">{headers.Event}</p>}
+          {headers.Event && <p className="text-xs text-primary/80 uppercase tracking-wider font-semibold">{headers.Event}</p>}
           {(headers.White || headers.Black) && (
-            <p className="text-sm font-semibold mt-1 text-foreground">
+            <p className="text-base font-semibold mt-1 text-foreground">
               {headers.White || '?'} <span className="text-muted-foreground font-medium mx-1">vs</span> {headers.Black || '?'}
             </p>
           )}
           {headers.Result && (
-            <span className="inline-block mt-2 text-[11px] font-mono px-2 py-1 rounded-lg bg-primary/10 text-primary border border-primary/20">
+            <span className="inline-block mt-2 text-xs font-mono px-2.5 py-1 rounded-lg bg-primary/10 text-primary border border-primary/20">
               {headers.Result}
             </span>
           )}
@@ -44,10 +44,10 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
         ) : (
           <div className="space-y-px">
             {pairs.map((pair) => (
-              <div key={pair.num} className="flex text-sm font-mono items-center">
-                <span className="w-8 text-muted-foreground/60 text-right mr-2 shrink-0 text-xs">{pair.num}.</span>
+              <div key={pair.num} className="flex text-base font-mono items-center">
+                <span className="w-9 text-muted-foreground/60 text-right mr-2 shrink-0 text-sm">{pair.num}.</span>
                 <button
-                  className={`px-2 py-1 rounded-md text-left transition-colors text-xs ${
+                  className={`px-2.5 py-1.5 rounded-md text-left transition-colors text-sm ${
                     currentMoveIndex === pair.whiteIdx
                       ? 'bg-primary/15 text-primary font-semibold ring-1 ring-primary/20'
                       : 'hover:bg-accent/40'
@@ -58,7 +58,7 @@ export function MoveList({ moves, currentMoveIndex, onMoveClick, headers }: Move
                 </button>
                 {pair.black && pair.blackIdx !== undefined && (
                   <button
-                    className={`px-2 py-1 rounded-md text-left transition-colors ml-1 text-xs ${
+                    className={`px-2.5 py-1.5 rounded-md text-left transition-colors ml-1 text-sm ${
                       currentMoveIndex === pair.blackIdx
                         ? 'bg-primary/15 text-primary font-semibold ring-1 ring-primary/20'
                         : 'hover:bg-accent/40'
