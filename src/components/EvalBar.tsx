@@ -31,7 +31,7 @@ export function EvalBar({ evaluation, winningChances, mate, flipped }: EvalBarPr
   const favorsWhite = mate != null && mate !== 0 ? mate > 0 : (evaluation != null ? evaluation >= 0 : true);
 
   return (
-    <div className="flex flex-col items-center w-7 rounded-lg overflow-hidden border border-border h-full min-h-[200px] shadow-sm">
+    <div className="flex flex-col items-center w-8 rounded-lg overflow-hidden border border-border h-full min-h-[240px] shadow-sm">
       {/* Black side */}
       <div
         className="w-full transition-all duration-500 ease-out flex items-start justify-center"
@@ -41,7 +41,7 @@ export function EvalBar({ evaluation, winningChances, mate, flipped }: EvalBarPr
         }}
       >
         {!favorsWhite && (
-          <span className="text-[9px] font-mono text-muted-foreground mt-1 font-semibold">{displayText}</span>
+          <span className="text-[11px] font-mono text-muted-foreground mt-1 font-semibold">{displayText}</span>
         )}
       </div>
       {/* White side */}
@@ -53,7 +53,7 @@ export function EvalBar({ evaluation, winningChances, mate, flipped }: EvalBarPr
         }}
       >
         {favorsWhite && (
-          <span className="text-[9px] font-mono mb-1 font-semibold" style={{ color: 'hsl(220 15% 15%)' }}>
+          <span className="text-[11px] font-mono mb-1 font-semibold" style={{ color: 'hsl(220 15% 15%)' }}>
             {displayText}
           </span>
         )}

@@ -19,7 +19,7 @@ const PIECE_PATHS: Record<string, string> = {
   p: 'M22.5 9c-2.21 0-4 1.79-4 4 0 .89.29 1.71.78 2.38C17.33 16.5 16 18.59 16 21c0 2.03.94 3.84 2.41 5.03C15.41 27.09 11 31.58 11 39.5H34C34 31.58 29.59 27.09 26.59 26.03A6.006 6.006 0 0 0 29 21c0-2.41-1.33-4.5-3.28-5.62.49-.67.78-1.49.78-2.38 0-2.21-1.79-4-4-4z',
 };
 
-export function ChessPiece({ piece, color, size = 45 }: ChessPieceProps) {
+export function ChessPiece({ piece, color, size = 54 }: ChessPieceProps) {
   const path = PIECE_PATHS[piece];
   if (!path) return null;
 

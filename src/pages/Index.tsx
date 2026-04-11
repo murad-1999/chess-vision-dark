@@ -245,14 +245,14 @@ const Index = () => {
       <header className="w-full border-b border-border/60 bg-card/90 backdrop-blur-md sticky top-0 z-50 shadow-sm shadow-black/5">
         <div className="max-w-[1600px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center shadow-sm">
-              <span className="text-xl">♔</span>
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center shadow-sm">
+              <span className="text-2xl">♔</span>
             </div>
-            <h1 className="text-xl font-semibold text-foreground tracking-tight">Chess Game Viewer</h1>
+            <h1 className="text-2xl font-semibold text-foreground tracking-tight">Chess Game Viewer</h1>
           </div>
           <div className="flex items-center gap-3">
             {pollingTaskId && (
-              <span className="text-xs text-muted-foreground animate-pulse mr-2 bg-muted/50 px-3 py-1.5 rounded-full">
+              <span className="text-sm text-muted-foreground animate-pulse mr-2 bg-muted/50 px-4 py-2 rounded-full">
                 ⟳ Analyzing...
               </span>
             )}
@@ -276,7 +276,7 @@ const Index = () => {
           <div className="rounded-2xl border border-border/60 bg-card/50 backdrop-blur-sm mb-8 overflow-hidden shadow-lg shadow-black/10">
             <CollapsibleTrigger asChild>
               <button className="w-full flex items-center justify-between px-6 py-4 hover:bg-accent/20 transition-all duration-200">
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-base font-medium text-foreground">
                   {gameState ? 'Load a different game' : 'Import a game'}
                 </span>
                 <ChevronDown
@@ -298,7 +298,7 @@ const Index = () => {
         {gameState && (
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Board column */}
-            <div className="flex flex-col gap-3 flex-shrink-0 max-w-[560px] lg:max-w-[600px] w-full">
+            <div className="flex flex-col gap-3 flex-shrink-0 max-w-[672px] lg:max-w-[720px] w-full">
               {/* Captured pieces & Tension */}
               <div className="flex items-center justify-between min-h-[28px] px-2">
                 <CapturedPieces fen={currentFen} />
@@ -324,7 +324,7 @@ const Index = () => {
 
               {/* Opening name */}
               {opening && (
-                <div className="text-xs text-muted-foreground px-2 py-2 bg-muted/30 rounded-lg inline-block self-start">
+                <div className="text-sm text-muted-foreground px-3 py-2.5 bg-muted/30 rounded-lg inline-block self-start">
                   <span className="font-mono text-primary/90 mr-2 font-semibold">{opening.eco}</span>
                   {opening.name}
                 </div>
@@ -332,7 +332,7 @@ const Index = () => {
             </div>
 
             {/* Right panel — flush with board height */}
-            <div className="flex flex-col lg:w-80 w-full min-w-0 max-h-[560px] lg:max-h-[600px] rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm overflow-hidden self-stretch shadow-xl shadow-black/15">
+            <div className="flex flex-col lg:w-96 w-full min-w-0 max-h-[672px] lg:max-h-[720px] rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm overflow-hidden self-stretch shadow-xl shadow-black/15">
               <MoveList
                 moves={gameState.moves}
                 currentMoveIndex={currentMoveIndex}
@@ -361,12 +361,12 @@ const Index = () => {
         {/* Empty state */}
         {!gameState && !inputOpen && (
           <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
-            <div className="w-24 h-24 rounded-2xl bg-muted/50 flex items-center justify-center mb-6 shadow-inner">
-              <span className="text-6xl opacity-40">♟</span>
+            <div className="w-28 h-28 rounded-2xl bg-muted/50 flex items-center justify-center mb-6 shadow-inner">
+              <span className="text-7xl opacity-40">♟</span>
             </div>
-            <p className="text-base font-medium">Import a game to get started</p>
-            <p className="text-sm text-muted-foreground/70 mt-2">Paste PGN, FEN, or a game URL</p>
-            <Button variant="secondary" size="sm" className="mt-6 px-6 rounded-xl" onClick={() => setInputOpen(true)}>
+            <p className="text-lg font-medium">Import a game to get started</p>
+            <p className="text-base text-muted-foreground/70 mt-2">Paste PGN, FEN, or a game URL</p>
+            <Button variant="secondary" size="default" className="mt-6 px-8 rounded-xl" onClick={() => setInputOpen(true)}>
               Open import panel
             </Button>
           </div>

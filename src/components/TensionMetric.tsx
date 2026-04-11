@@ -17,8 +17,8 @@ export const TensionMetric: React.FC<TensionMetricProps> = ({ currentEntropy }) 
   }
 
   return (
-    <div className={`inline-flex items-center justify-center px-3 py-1 rounded-full border text-sm font-semibold transition-colors duration-300 ${colorClasses}`}>
-      <span className="mr-2 uppercase tracking-wider text-[10px] opacity-80">{label}</span>
+    <div className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full border text-base font-semibold transition-colors duration-300 ${colorClasses}`}>
+      <span className="mr-2 uppercase tracking-wider text-xs opacity-80">{label}</span>
       <span>{currentEntropy.toFixed(2)}</span>
     </div>
   );
