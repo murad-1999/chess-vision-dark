@@ -332,7 +332,7 @@ const Index = () => {
             </div>
 
             {/* Right panel — flush with board height */}
-            <div className="flex flex-col lg:w-80 w-full min-w-0 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm overflow-hidden self-stretch shadow-xl shadow-black/15">
+            <div className="flex flex-col lg:w-80 w-full min-w-0 max-h-[560px] lg:max-h-[600px] rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm overflow-hidden self-stretch shadow-xl shadow-black/15">
               <MoveList
                 moves={gameState.moves}
                 currentMoveIndex={currentMoveIndex}
