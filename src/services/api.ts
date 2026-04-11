@@ -1,8 +1,15 @@
 const ENTROPY_SERVICE_URL = 'http://localhost:8001';
 
+export interface EngineLine {
+  cp_score: number | null;
+  mate_score: number | null;
+  pv: string;
+}
+
 export interface AnalysisResponse {
   total_entropy: number;
   tension_matrix: Record<string, number>;
+  engine_lines: EngineLine[];
 }
 
 export async function analyzePosition(fen: string): Promise<AnalysisResponse> {

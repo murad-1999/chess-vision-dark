@@ -53,6 +53,8 @@ const Index = () => {
   const analysisTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [tensionMatrix, setTensionMatrix] = useState<Record<string, number>>({});
   const [currentEntropy, setCurrentEntropy] = useState<number>(0);
+  const [currentEval, setCurrentEval] = useState<number | null>(null);
+  const [currentMate, setCurrentMate] = useState<number | null>(null);
 
   // Background Graph Hydration (Computed from cache)
   const entropyData = useMemo(() => {
@@ -194,37 +196,51 @@ const Index = () => {
   const currentLastMove = gameState ? gameState.lastMoves[currentFenIndex] : null;
 
   // Engine eval for current position
-  const currentEngineEval = gameState?.engineEvals?.[currentFenIndex];
-  const evalCentipawns = currentEngineEval?.centipawns != null ? currentEngineEval.centipawns / 100 : null;
-  const evalWinningChances = currentEngineEval?.winning_chances ?? null;
-  const evalMate = currentEngineEval?.mate ?? null;
+  // Engine eval for current position is now driven by JIT state
+  const evalCentipawns = currentEval;
+  const evalMate = currentMate;
+  const evalWinningChances = null; // Removed legacy winning chances for now
 
   // JIT FEN Analysis with Debounce
   useEffect(() => {
     if (!currentFen) return;
 
-    // Clear existing timeout
+    // Clear existing timeout (proper cleanup for debounce logic)
     if (analysisTimeoutRef.current) {
       clearTimeout(analysisTimeoutRef.current);
     }
 
+    // Helper to update state from analysis data
+    const updateAnalysisState = (data: AnalysisResponse) => {
+      setCurrentEntropy(data.total_entropy);
+      setTensionMatrix(data.tension_matrix);
+      
+      const bestLine = data.engine_lines?.[0];
+      if (bestLine) {
+        // cp_score is in centipawns, convert to pawns for EvalBar
+        const score = bestLine.cp_score !== null ? bestLine.cp_score / 100 : null;
+        setCurrentEval(score);
+        setCurrentMate(bestLine.mate_score);
+      } else {
+        setCurrentEval(null);
+        setCurrentMate(null);
+      }
+    };
+
     // Check cache first for immediate update
     if (analysisCache[currentFen]) {
-      const cached = analysisCache[currentFen];
-      setCurrentEntropy(cached.total_entropy);
-      setTensionMatrix(cached.tension_matrix);
+      updateAnalysisState(analysisCache[currentFen]);
       return;
     }
 
-    // Debounce the API call
+    // Debounce the API call (prevent race conditions and backend spam)
     analysisTimeoutRef.current = setTimeout(async () => {
       try {
         const data = await analyzePosition(currentFen);
         
         // Update cache and current position data
         setAnalysisCache(prev => ({ ...prev, [currentFen]: data }));
-        setCurrentEntropy(data.total_entropy);
-        setTensionMatrix(data.tension_matrix);
+        updateAnalysisState(data);
       } catch (err) {
         console.error('Failed to fetch entropy analysis:', err);
       }
@@ -235,7 +251,7 @@ const Index = () => {
         clearTimeout(analysisTimeoutRef.current);
       }
     };
-  }, [currentFen]);
+  }, [currentFen, analysisCache]);
 
   // Fallback to material eval if no engine data
   const materialEval = evaluateMaterial(currentFen);
