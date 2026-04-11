@@ -38,6 +38,7 @@ export function ChessBoard({ fen, flipped, lastMove }: ChessBoardProps) {
                   : isLight
                   ? 'hsl(var(--board-light))'
                   : 'hsl(var(--board-dark))',
+                boxShadow: isHighlighted ? 'inset 0 0 0 1.5px hsl(var(--board-highlight) / 0.7)' : undefined,
               }}
             >
               {fi === 0 && (
