@@ -50,7 +50,6 @@ const Index = () => {
 
   // JIT Analysis state
   const [analysisCache, setAnalysisCache] = useState<Record<string, AnalysisResponse>>({});
-  const analysisTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [tensionMatrix, setTensionMatrix] = useState<Record<string, number>>({});
   const [currentEntropy, setCurrentEntropy] = useState<number>(0);
   const [currentEval, setCurrentEval] = useState<number | null>(null);
@@ -205,11 +204,6 @@ const Index = () => {
   useEffect(() => {
     if (!currentFen) return;
 
-    // Clear existing timeout (proper cleanup for debounce logic)
-    if (analysisTimeoutRef.current) {
-      clearTimeout(analysisTimeoutRef.current);
-    }
-
     // Helper to update state from analysis data
     const updateAnalysisState = (data: AnalysisResponse) => {
       setCurrentEntropy(data.total_entropy);
@@ -234,7 +228,7 @@ const Index = () => {
     }
 
     // Debounce the API call (prevent race conditions and backend spam)
-    analysisTimeoutRef.current = setTimeout(async () => {
+    const timeoutId = setTimeout(async () => {
       try {
         const data = await analyzePosition(currentFen);
         
@@ -247,11 +241,9 @@ const Index = () => {
     }, 300);
 
     return () => {
-      if (analysisTimeoutRef.current) {
-        clearTimeout(analysisTimeoutRef.current);
-      }
+      clearTimeout(timeoutId);
     };
-  }, [currentFen, analysisCache]);
+  }, [currentFen]);
 
   // Fallback to material eval if no engine data
   const materialEval = evaluateMaterial(currentFen);
