@@ -13,6 +13,7 @@ import { HeatmapOverlay } from '@/components/HeatmapOverlay';
 import { EntropyGraph, EntropyDataPoint } from '@/components/EntropyGraph';
 import { detectInputType, fetchPgnFromUrl, evaluateMaterial } from '@/lib/chess-utils';
 import { detectOpening } from '@/lib/openings';
+import { analyzePosition } from '@/services/api';
 import {
   Collapsible,
   CollapsibleContent,
@@ -230,6 +231,36 @@ const Index = () => {
   const evalCentipawns = currentEngineEval?.centipawns != null ? currentEngineEval.centipawns / 100 : null;
   const evalWinningChances = currentEngineEval?.winning_chances ?? null;
   const evalMate = currentEngineEval?.mate ?? null;
+
+  // New entropy and tension analysis
+  useEffect(() => {
+    if (!currentFen) return;
+
+    const fetchAnalysis = async () => {
+      try {
+        const data = await analyzePosition(currentFen);
+        console.log("API Response:", data);
+        setCurrentEntropy(data.total_entropy);
+        setTensionMatrix(data.tension_matrix);
+        
+        // Update entropy graph data if we have a valid index
+        if (currentFenIndex >= 0) {
+          setEntropyData(prev => {
+            const newData = [...prev];
+            newData[currentFenIndex] = {
+              move: currentFenIndex === 0 ? 'Start' : gameState?.moves[currentFenIndex - 1] || `${currentFenIndex}`,
+              entropy: data.total_entropy
+            };
+            return newData;
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch entropy analysis:', err);
+      }
+    };
+
+    fetchAnalysis();
+  }, [currentFen, currentFenIndex, gameState?.moves]);
 
   // Fallback to material eval if no engine data
   const materialEval = evaluateMaterial(currentFen);

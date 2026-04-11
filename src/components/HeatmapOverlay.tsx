@@ -13,7 +13,7 @@ export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = React.memo(({ tensi
   const displayRanks = flipped ? [...ranks].reverse() : ranks;
 
   return (
-    <div className="absolute inset-0 pointer-events-none grid grid-cols-8 grid-rows-8 z-10">
+    <div className="absolute inset-0 pointer-events-none grid grid-cols-8 grid-rows-8 z-30">
       {displayRanks.map(rank =>
         displayFiles.map(file => {
           const square = `${file}${rank}`;
