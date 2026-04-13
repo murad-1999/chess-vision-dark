@@ -90,7 +90,7 @@ export function ChessBoard({ fen, flipped, lastMove }: ChessBoardProps) {
             >
               {fi === 0 && (
                 <span
-                  className="absolute top-0.5 left-0.5 text-xs leading-none font-semibold"
+                  className="absolute top-0.5 left-0.5 z-20 text-xs leading-none font-semibold"
                   style={{ color: isLight ? 'hsl(var(--board-dark))' : 'hsl(var(--board-light))' }}
                 >
                   {rank}
@@ -98,7 +98,7 @@ export function ChessBoard({ fen, flipped, lastMove }: ChessBoardProps) {
               )}
               {ri === 7 && (
                 <span
-                  className="absolute bottom-0.5 right-0.5 text-xs leading-none font-semibold"
+                  className="absolute bottom-0.5 right-0.5 z-20 text-xs leading-none font-semibold"
                   style={{ color: isLight ? 'hsl(var(--board-dark))' : 'hsl(var(--board-light))' }}
                 >
                   {file}

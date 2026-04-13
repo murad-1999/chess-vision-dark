@@ -13,7 +13,7 @@ export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = React.memo(({ tensi
   const displayRanks = flipped ? [...ranks].reverse() : ranks;
 
   return (
-    <div className="absolute inset-0 pointer-events-none grid grid-cols-8 grid-rows-8 z-30">
+    <div className="absolute inset-0 pointer-events-none grid grid-cols-8 grid-rows-8 z-10 rounded-md overflow-hidden">
       {displayRanks.map(rank =>
         displayFiles.map(file => {
           const square = `${file}${rank}`;
@@ -21,9 +21,9 @@ export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = React.memo(({ tensi
           return (
             <div
               key={square}
-              className="w-full h-full"
+              className="w-full h-full border border-black/10 dark:border-white/10"
               style={{
-                backgroundColor: value > 0 ? `rgba(239, 68, 68, ${value})` : 'transparent',
+                backgroundColor: value > 0 ? `rgba(239, 68, 68, ${value * 0.35})` : 'transparent',
               }}
             />
           );
